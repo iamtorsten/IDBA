@@ -9,7 +9,7 @@ leuchtgruen = "\033[1;32m"
 target = ""
 # Zielbibliothek
 target_library = ""
-# Hooked Funktionen
+# Hooked Functions
 functions = [
     {"offset": 0xab5b0, "name": "pattern_701872"},
 ]
