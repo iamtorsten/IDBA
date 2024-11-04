@@ -14,6 +14,8 @@ def on_message(message, data):
             registers = payload.get("registers", {})
             instruction_address = payload.get("address", "N/A")
             base_address = payload.get("base_address", "N/A")
+            target_offset = payload.get("target_offset", "N/A")
+
             try:
                 real_instruction_address = hex(int(instruction_address, 16) - int(base_address, 16))
             except:
@@ -65,7 +67,12 @@ def on_message(message, data):
                     'w15', 'w16', 'w17', 'w18', 'w19', 'w20', 'w21',
                     'w22', 'w23', 'w24', 'w25', 'w26', 'w27', 'w28',
                     'w29', 'w30', 'wsp', 'wpc',
-                    'rax', 'rbx', 'rcx', 'rdx', 'rsi', 'rdi', 'rbp', 'rsp'
+                    'rax', 'rbx', 'rcx', 'rdx', 'rsi', 'rdi', 'rbp', 'rsp',
+                    "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7",
+                    "q8", "q9", "q10", "q11", "q12", "q13", "q14",
+                    "q15", "q16", "q17", "q18", "q19", "q20", "q21",
+                    "q22", "q23", "q24", "q25", "q26", "q27", "q28",
+                    "q29", "q30", "q31"
                 ]
 
                 # Erstelle einen regulären Ausdruck basierend auf den möglichen Registern
@@ -118,8 +125,7 @@ def on_message(message, data):
 
                 if write_register_changes:
                     # Protokolliere die Registeränderungen
-                    print(f"{gelb}Registeränderungen bei '{mnemonic} {opStr.strip()}': " + ' '.join(
-                        current_register_values) + f"{reset}")
+                    print(f"{gelb}Registeränderungen bei '{mnemonic} {opStr.strip()}': " + ' '.join(current_register_values) + f"{reset}")
                     try:
                         with codecs.open(file_path_log, "a", "utf-8") as f:
                             f.write(f"Registeränderungen bei '{mnemonic} {opStr.strip()}': " + ' '.join(
@@ -147,8 +153,7 @@ def on_message(message, data):
                         register_values.append(
                             f"{reg}=>{hex_value} (int: {int_value}, str: '{str_value}', bytes: {byte_value})")
 
-                    print(f"{gelb}Register=>[{target_library}!{function_offset}] " + ' '.join(
-                        register_values) + f"{reset}")
+                    print(f"{gelb}Register=>[{target_library}!{function_offset}] " + ' '.join(register_values) + f"{reset}")
 
                     with codecs.open(file_path_log, "a", "utf-8") as f:
                         f.write(f"Register=>[{target_library}!{function_offset}] " + ' '.join(register_values))
@@ -164,5 +169,15 @@ def on_message(message, data):
                 try:
                     with codecs.open(file_path_log, "a", "utf-8") as f:
                         f.write(f"[ERROR] {error_msg}\n")
+                except Exception as e:
+                    print(f"{rot}[FEHLER] Fehler konnte nicht in die Protokolldatei geschrieben werden: {e}{reset}")
+
+            # Protokollieren der Anwendungsverfolgung
+            if payload.get("hook") == True and write_function_trace:
+                sequence = f"{instruction_address}=>{real_instruction_address} [{target_library}!{function_offset}] => {target_offset}"
+                print(f"{violet}[SPRUNG] {sequence}{reset}")
+                try:
+                    with codecs.open(file_path_call_stack, "a", "utf-8") as f:
+                        f.write(f"[SPRUNG] {sequence}\n")
                 except Exception as e:
                     print(f"{rot}[FEHLER] Fehler konnte nicht in die Protokolldatei geschrieben werden: {e}{reset}")

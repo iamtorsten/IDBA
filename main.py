@@ -26,9 +26,9 @@ def main():
     try:
         # Hook
         if infinity_instructions:
-            script_code = hook(target_library, functions)
+            script_code = hook(target_library=target_library, functions=functions, ignore_offsets=ignored_offsets)
         else:
-            script_code = hook(target_library, functions, max_instructions)
+            script_code = hook(target_library=target_library, max_instructions=max_instructions, functions=functions, ignore_offsets=ignored_offsets)
 
         # Gerät, Sitzung und Quelle einrichten
         IDBA = Inject(target=target)
