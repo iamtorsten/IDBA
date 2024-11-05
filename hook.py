@@ -26,7 +26,12 @@ def hook(target_library, functions, max_instructions=None, ignore_offsets=None):
                     "q8", "q9", "q10", "q11", "q12", "q13", "q14",
                     "q15", "q16", "q17", "q18", "q19", "q20", "q21",
                     "q22", "q23", "q24", "q25", "q26", "q27", "q28",
-                    "q29", "q30", "q31"
+                    "q29", "q30", "q31",
+                    "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",
+                    "d8", "d9", "d10", "d11", "d12", "d13", "d14",
+                    "d15", "d16", "d17", "d18", "d19", "d20", "d21",
+                    "d22", "d23", "d24", "d25", "d26", "d27", "d28",
+                    "d29", "d30", "d31"
                 ];
                 return registerNames.includes(opStr);
             }}
@@ -42,14 +47,19 @@ def hook(target_library, functions, max_instructions=None, ignore_offsets=None):
                     "q8", "q9", "q10", "q11", "q12", "q13", "q14",
                     "q15", "q16", "q17", "q18", "q19", "q20", "q21",
                     "q22", "q23", "q24", "q25", "q26", "q27", "q28",
-                    "q29", "q30", "q31"
+                    "q29", "q30", "q31",
+                    "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",
+                    "d8", "d9", "d10", "d11", "d12", "d13", "d14",
+                    "d15", "d16", "d17", "d18", "d19", "d20", "d21",
+                    "d22", "d23", "d24", "d25", "d26", "d27", "d28",
+                    "d29", "d30", "d31"
                 ];
 
                 var registers = {{}};
 
                 registerNames.forEach(function(name) {{
                     if (context[name] !== undefined) {{
-                        if (name.startsWith("q") && context[name] instanceof ArrayBuffer) {{
+                        if ((name.startsWith("q") || name.startsWith("d")) && context[name] instanceof ArrayBuffer) {{
                             var byteArray = new Uint8Array(context[name]);
                             var hexString = Array.from(byteArray, byte => ('0' + byte.toString(16)).slice(-2)).join('');
                             registers[name] = {{ "hex": "0x" + hexString }};
