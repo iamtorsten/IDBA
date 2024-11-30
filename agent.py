@@ -12,7 +12,7 @@ target = ""
 target_library = ""
 # Hooked Funktionen
 functions = [
-    {"offset": 0xab5b0, "name": "pattern_701872"}
+    {"offset": 0x8d1b0, "name": "0x8d1b0"}
 ]
 # Dateiname-/Pfad
 file_path_log = f'IDBA-log.txt'
