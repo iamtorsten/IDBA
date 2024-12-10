@@ -18,18 +18,18 @@ def convert_register_value(hex_value):
     try:
         int_value = int(hex_value, 16)
     except ValueError:
-        int_value = '<nicht darstellbar>'
+        int_value = '<na>'
 
     # Konvertiere zu Bytes
     try:
         byte_value = bytes.fromhex(hex_value)  # Hex-String zu Bytes konvertieren
     except ValueError:
-        byte_value = b'<nicht darstellbar>'
+        byte_value = b'<na>'
 
     # Versuche, eine String-Darstellung zu erhalten
     try:
-        str_value = byte_value.decode('utf-8') if byte_value != b'<nicht darstellbar>' else '<nicht darstellbar>'
+        str_value = byte_value.decode('utf-8') if byte_value != b'<na>' else '<na>'
     except UnicodeDecodeError:
-        str_value = '<nicht darstellbar>'  # Wenn Dekodierung fehlschlägt
+        str_value = '<na>'  # Wenn Dekodierung fehlschlägt
 
     return int_value, str_value, byte_value

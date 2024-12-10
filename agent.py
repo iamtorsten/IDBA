@@ -12,18 +12,16 @@ target = ""
 target_library = ""
 # Hooked Funktionen
 functions = [
-    {"offset": 0x8d1b0, "name": "0x8d1b0"}
 ]
+with open('functions.txt', "r") as file:
+    for line in file:
+        line = line.strip()  # Entferne Leerzeichen und Zeilenumbrüche
+        if line:  # Nur nicht-leere Zeilen verarbeiten
+            # Zeile in ein Python-Objekt umwandeln
+            function = eval(line)  # Vorsicht: Verwenden Sie eval nur mit vertrauenswürdigen Dateien!
+            functions.append(function)
 # Dateiname-/Pfad
 file_path_log = f'IDBA-log.txt'
-file_path_vm_log = f'IDBA-vm-log.txt'
-file_path_call_stack = f'IDBA-call-stack-log.txt'
-# Ausgabe Registeränderungen
-write_register_changes = True
-# Aktiviere Binary Log
-write_bin = True
-# Ausgabe Anwendungsverfolgung
-write_function_trace = True
 # Unbegrenzung von Instruktionen
 infinity_instructions = True
 # Maximale Instruktionen

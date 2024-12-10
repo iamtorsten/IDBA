@@ -258,7 +258,21 @@ def hook(target_library, functions, max_instructions=None, ignore_offsets=None, 
                     "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
                     "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15",
                     "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",
-                    "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31"
+                    "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31",
+                    
+                    // **ARM64 Predicate Registers**
+                    "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7",
+                    "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15",
+                
+                    // **Point-Level Predicate Registers**
+                    "p0.b", "p1.b", "p2.b", "p3.b", "p4.b", "p5.b", "p6.b", "p7.b",
+                    "p8.b", "p9.b", "p10.b", "p11.b", "p12.b", "p13.b", "p14.b", "p15.b",
+                    "p0.h", "p1.h", "p2.h", "p3.h", "p4.h", "p5.h", "p6.h", "p7.h",
+                    "p8.h", "p9.h", "p10.h", "p11.h", "p12.h", "p13.h", "p14.h", "p15.h",
+                    "p0.s", "p1.s", "p2.s", "p3.s", "p4.s", "p5.s", "p6.s", "p7.s",
+                    "p8.s", "p9.s", "p10.s", "p11.s", "p12.s", "p13.s", "p14.s", "p15.s",
+                    "p0.d", "p1.d", "p2.d", "p3.d", "p4.d", "p5.d", "p6.d", "p7.d",
+                    "p8.d", "p9.d", "p10.d", "p11.d", "p12.d", "p13.d", "p14.d", "p15.d"
                 ];
 
                 var registers = {{}};
@@ -437,6 +451,17 @@ def hook(target_library, functions, max_instructions=None, ignore_offsets=None, 
                                     }}
                                 }} else {{
                                     console.log("[INFO] Anweisung ohne Zielregister oder Operand: " + instruction.mnemonic);
+                                    
+                                    send({{
+                                    "event": "instruction",
+                                    "address": currentAddress.toString(),
+                                    "base_address": baseAddress.toString(),
+                                    "mnemonic": instruction.mnemonic,
+                                    "opStr": instruction.opStr,
+                                    "function_name": functionName,
+                                    "function_offset": "{hex(offset)}",
+                                    "registers": getRegisterInfo(this.context)
+                                }});
                                 }}
                             }} else {{
                                 send({{

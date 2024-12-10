@@ -1,6 +1,7 @@
 import codecs
 import re
 import agent
+import mem
 
 from utils import convert_register_value
 from agent import *
@@ -173,11 +174,25 @@ def on_message(message, data):
                     "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
                     "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15",
                     "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",
-                    "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31"
+                    "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31",
+
+                    # **ARM64 Predicate Registers**
+                    "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7",
+                    "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15",
+
+                    # **Point-Level Predicate Registers**
+                    "p0.b", "p1.b", "p2.b", "p3.b", "p4.b", "p5.b", "p6.b", "p7.b",
+                    "p8.b", "p9.b", "p10.b", "p11.b", "p12.b", "p13.b", "p14.b", "p15.b",
+                    "p0.h", "p1.h", "p2.h", "p3.h", "p4.h", "p5.h", "p6.h", "p7.h",
+                    "p8.h", "p9.h", "p10.h", "p11.h", "p12.h", "p13.h", "p14.h", "p15.h",
+                    "p0.s", "p1.s", "p2.s", "p3.s", "p4.s", "p5.s", "p6.s", "p7.s",
+                    "p8.s", "p9.s", "p10.s", "p11.s", "p12.s", "p13.s", "p14.s", "p15.s",
+                    "p0.d", "p1.d", "p2.d", "p3.d", "p4.d", "p5.d", "p6.d", "p7.d",
+                    "p8.d", "p9.d", "p10.d", "p11.d", "p12.d", "p13.d", "p14.d", "p15.d"
                 ]
 
                 # Erstelle einen regulären Ausdruck basierend auf den möglichen Registern
-                register_pattern = r'(?<!\w)(' + '|'.join(possible_registers).replace('.', r'\.') + r')(?!\w)'
+                register_pattern = r'\b(?!zip2\b)[a-zA-Z]+\d+(?:\.[bhsd])?\b'
 
                 # Finde alle Register in der Assembly-Anweisung
                 found_registers = re.findall(register_pattern, opStr)
@@ -208,14 +223,6 @@ def on_message(message, data):
                 except Exception as e:
                     print(f"{rot}[FEHLER] Schreiben in die Protokolldatei fehlgeschlagen: {e}{reset}")
 
-                # VM Log schreiben
-                if write_bin:
-                    try:
-                        with codecs.open(file_path_vm_log, "a", "utf-8") as f:
-                            f.write(f"{formatted_output}\n")
-                    except Exception as e:
-                        print(f"{rot}[FEHLER] Schreiben in die Protokolldatei fehlgeschlagen: {e}{reset}")
-
                 current_registers = payload.get("registers", {})
                 current_register_values = []
                 for reg in current_registers:
@@ -224,15 +231,16 @@ def on_message(message, data):
                     current_register_values.append(
                         f"{reg}=>{hex_value} (int: {int_value}, str: '{str_value}', bytes: {byte_value})")
 
-                if write_register_changes:
-                    # Protokolliere die Registeränderungen
-                    print(f"{gelb}Registeränderungen bei '{mnemonic} {opStr.strip()}': " + ' '.join(current_register_values) + f"{reset}")
+                # Protokolliere die Registeränderungen
+                mem_access_type = mem.classify_arm64_instruction(mnemonic)
+                if mem_access_type != "Unklassifiziert":
+                    print(f"{gelb}Speicher {mem_access_type.upper()} bei '{mnemonic} {opStr.strip()}' " + ' '.join(current_register_values) + f"{reset}")
                     try:
                         with codecs.open(file_path_log, "a", "utf-8") as f:
-                            f.write(f"Registeränderungen bei '{mnemonic} {opStr.strip()}': " + ' '.join(
-                                current_register_values) + '\n')
+                            f.write(f"SPEICHER {mem_access_type.upper()} bei '{mnemonic} {opStr.strip()}' " + ' '.join(current_register_values) + '\n')
                     except Exception as e:
                         print(f"{rot}[FEHLER] Schreiben in die Protokolldatei fehlgeschlagen: {e}{reset}")
+
 
             # Log-Rückgabewert
             if return_value is not None:
@@ -269,16 +277,20 @@ def on_message(message, data):
                 print(f"{rot}[FEHLER] {error_msg}{reset}")
                 try:
                     with codecs.open(file_path_log, "a", "utf-8") as f:
-                        f.write(f"[ERROR] {error_msg}\n")
+                        f.write(f"[FEHLER] {error_msg}\n")
                 except Exception as e:
                     print(f"{rot}[FEHLER] Fehler konnte nicht in die Protokolldatei geschrieben werden: {e}{reset}")
 
             # Protokollieren der Anwendungsverfolgung
-            if payload.get("hook") == True and write_function_trace:
-                sequence = f"{instruction_address}=>{real_instruction_address} [{target_library}!{function_offset}] => {target_offset}"
+            if payload.get("hook"):
+                sequence = f"{instruction_address}=>{real_instruction_address} [{target_library}!{function_offset}] Sprung => {target_offset}"
                 print(f"{violet}[SPRUNG] {sequence}{reset}")
                 try:
-                    with codecs.open(file_path_call_stack, "a", "utf-8") as f:
-                        f.write(f"[SPRUNG] {sequence}\n")
+                    with codecs.open(file_path_log, "a", "utf-8") as f:
+                        f.write(f'SPRUNG bei {real_instruction_address} => {target_offset}\n')
+                    # Füge erkannte Sprünge in die Textdatei hinzu, welche zur Steuerung der zu hookenden Funktionen gilt
+                    # Format {"offset": 0xb6b9c, "name": "0xb6b9c"}
+                    with codecs.open('functions.txt', "a", "utf-8") as f:
+                        f.write(f'{{"offset": {target_offset}, "name": "{target_offset}"}}\n')
                 except Exception as e:
                     print(f"{rot}[FEHLER] Fehler konnte nicht in die Protokolldatei geschrieben werden: {e}{reset}")
