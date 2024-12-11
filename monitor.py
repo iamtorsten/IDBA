@@ -189,6 +189,37 @@ def on_message(message, data):
                     "p8.s", "p9.s", "p10.s", "p11.s", "p12.s", "p13.s", "p14.s", "p15.s",
                     "p0.d", "p1.d", "p2.d", "p3.d", "p4.d", "p5.d", "p6.d", "p7.d",
                     "p8.d", "p9.d", "p10.d", "p11.d", "p12.d", "p13.d", "p14.d", "p15.d"
+
+                    # **ARM64 SVE Vector Registers (Scalable Vector Extension - Z-Register)**
+                    # Beschreibung: Z-Register sind skalierbare Vektorregister, die für SIMD-Datenverarbeitung und Scalable Vector Extension (SVE) verwendet werden. Sie ermöglichen parallele Verarbeitung in unterschiedlichen Breiten.
+
+                    # Byte-Level (8-bit)
+                    "z0.b", "z1.b", "z2.b", "z3.b", "z4.b",
+                    "z5.b", "z6.b", "z7.b",
+                    "z8.b", "z9.b", "z10.b", "z11.b", "z12.b", "z13.b", "z14.b", "z15.b",
+                    "z16.b", "z17.b", "z18.b", "z19.b", "z20.b", "z21.b", "z22.b", "z23.b",
+                    "z24.b", "z25.b", "z26.b", "z27.b", "z28.b", "z29.b", "z30.b", "z31.b",
+
+                    # Halfword-Level (16-bit)
+                    "z0.h", "z1.h", "z2.h", "z3.h", "z4.h", "z5.h", "z6.h", "z7.h",
+                    "z8.h", "z9.h", "z10.h", "z11.h", "z12.h", "z13.h", "z14.h", "z15.h",
+                    "z16.h", "z17.h", "z18.h", "z19.h", "z20.h", "z21.h", "z22.h", "z23.h",
+                    "z24.h", "z25.h", "z26.h", "z27.h", "z28.h", "z29.h", "z30.h", "z31.h",
+
+                    # Word-Level (32-bit)
+                    "z0.s", "z1.s", "z2.s", "z3.s", "z4.s", "z5.s", "z6.s", "z7.s",
+                    "z8.s", "z9.s", "z10.s", "z11.s", "z12.s", "z13.s", "z14.s", "z15.s",
+                    "z16.s", "z17.s", "z18.s", "z19.s", "z20.s", "z21.s", "z22.s", "z23.s",
+                    "z24.s", "z25.s", "z26.s", "z27.s", "z28.s", "z29.s", "z30.s", "z31.s",
+
+                    # Doubleword-Level (64-bit)
+                    "z0.d", "z1.d", "z2.d", "z3.d", "z4.d", "z5.d", "z6.d", "z7.d",
+                    "z8.d", "z9.d", "z10.d", "z11.d", "z12.d", "z13.d", "z14.d", "z15.d",
+                    "z16.d", "z17.d", "z18.d", "z19.d", "z20.d", "z21.d", "z22.d", "z23.d",
+                    "z24.d", "z25.d", "z26.d", "z27.d", "z28.d", "z29.d", "z30.d", "z31.d",
+
+                    # Beschreibung: Die Registerbreite (b/h/s/d) hängt von der gewünschten Operation und Datenstruktur ab.
+                    # Z-Register sind für High-Performance-Computing, Kryptographie und SIMD-Operationen optimiert.
                 ]
 
                 # Erstelle einen regulären Ausdruck basierend auf den möglichen Registern

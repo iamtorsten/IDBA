@@ -90,6 +90,7 @@ def monitor_text_access(chunk_size=0x2000):
 
 def on_txt_message(message, data):
     if message["type"] == "send":
+        print(f'[.TEXT SEGMENT] {message["payload"]}')
         log_file.write(".Text\n" + message["payload"] + "\n")
     elif message["type"] == "error":
         print("[FEHLER]", message["stack"])
