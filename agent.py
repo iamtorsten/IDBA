@@ -13,7 +13,7 @@ target_library = ""
 # Hooked Funktionen
 functions = [
 ]
-with open('functions.txt', "r") as file:
+with open('symbols.txt', "r") as file:
     for line in file:
         line = line.strip()  # Entferne Leerzeichen und Zeilenumbrüche
         if line:  # Nur nicht-leere Zeilen verarbeiten
