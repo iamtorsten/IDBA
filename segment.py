@@ -26,7 +26,7 @@ def monitor_text_access(chunk_size=0x2000):
 
                    const module = Process.getModuleByName(targetLibrary);
                    if (!module) {{
-                       console.error("[ERROR] Modul " + targetLibrary + " nicht gefunden!");
+                       console.error("[FEHLER] Modul " + targetLibrary + " nicht gefunden!");
                        return;
                    }}
                    console.log("[INFO] Modul gefunden: " + module.name + " bei Adresse: " + module.base);
@@ -64,7 +64,7 @@ def monitor_text_access(chunk_size=0x2000):
                                                            .join(" ");
                                            value = hex;
                                        }} catch (e) {{
-                                           value = "[UNREADABLE]";
+                                           value = "[NICHT LESBAR]";
                                        }}
 
                                        var log = "Adresse: " + addr.toString(16) + " Zugriff: " + type + " Daten: " + value;
@@ -73,12 +73,12 @@ def monitor_text_access(chunk_size=0x2000):
                                    }}
                                }});
                            }} catch (e) {{
-                               console.error("[ERROR] Fehler bei MemoryAccessMonitor.enable: " + e.message + " für Teilbereich: " + JSON.stringify(splitRange));
+                               console.error("[FEHLER] Fehler bei MemoryAccessMonitor.enable: " + e.message + " für Teilbereich: " + JSON.stringify(splitRange));
                            }}
                        }}); // Ende der Teilbereich-Überwachung
                    }}); // Ende der Bereichsüberwachung
                }} catch (e) {{
-                   console.error("[ERROR] Fehler beim Initialisieren der Überwachung: " + e.message);
+                   console.error("[FEHLER] Fehler beim Initialisieren der Überwachung: " + e.message);
                }}
            }}
 
