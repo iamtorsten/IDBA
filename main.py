@@ -9,6 +9,7 @@ from hook       import hook
 from inject     import Inject
 from agent      import *
 from monitor    import on_message
+from segment    import monitor_text_access, on_txt_message
 
 banner = """
 ██╗██████╗ ██████╗  █████╗ 
@@ -39,9 +40,13 @@ def main():
         script.on('message', on_message)
         script.load()
 
+        # .text Bereich Überwachung
+        script = IDBA.source(session, monitor_text_access())
+        script.on('message', on_txt_message)
+        script.load()
+
         # Skript weiterlaufen lassen
-        print(
-            f"[*] IDBA [ -> {target} -> {target_library} -> {functions} ]: Überwachung gestartet. Drücken Sie Strg+C, um zu stoppen.")
+        print(f"[*] IDBA [ -> {target} -> {target_library} -> {functions} ]: Überwachung gestartet. Drücken Sie Strg+C, um zu stoppen.")
         print(f"module_name={target_library}")
         sys.stdin.read()
     except frida.ServerNotRunningError:
