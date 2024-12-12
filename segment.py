@@ -1,6 +1,5 @@
+import codecs
 from agent import target_library, file_path_log
-
-log_file = file_path_log
 
 
 def monitor_text_access(chunk_size=0x2000):
@@ -22,7 +21,7 @@ def monitor_text_access(chunk_size=0x2000):
 
            function monitorLibrary(targetLibrary) {{
                try {{
-                   console.log("[DEBUG] Suche nach Modul: " + targetLibrary);
+                   //console.log("[DEBUG] Suche nach Modul: " + targetLibrary);
 
                    const module = Process.getModuleByName(targetLibrary);
                    if (!module) {{
@@ -49,7 +48,7 @@ def monitor_text_access(chunk_size=0x2000):
                        var splitRanges = splitRange(basePointer, size, {chunk_size}); // Dynamische Chunk-Größe
                        splitRanges.forEach(function(splitRange) {{
                            try {{
-                               console.log("[INFO] Überwache Chunk: Start = " + splitRange.base + ", Size = " + splitRange.size);
+                               //console.log("[INFO] Überwache Chunk: Start = " + splitRange.base + ", Size = " + splitRange.size);
 
                                MemoryAccessMonitor.enable(splitRange.base, splitRange.size, {{
                                    onAccess: function(details) {{
@@ -73,7 +72,7 @@ def monitor_text_access(chunk_size=0x2000):
                                    }}
                                }});
                            }} catch (e) {{
-                               console.error("[FEHLER] Fehler bei MemoryAccessMonitor.enable: " + e.message + " für Teilbereich: " + JSON.stringify(splitRange));
+                               //console.error("[FEHLER] Fehler bei MemoryAccessMonitor.enable: " + e.message + " für Teilbereich: " + JSON.stringify(splitRange));
                            }}
                        }}); // Ende der Teilbereich-Überwachung
                    }}); // Ende der Bereichsüberwachung
@@ -91,7 +90,8 @@ def monitor_text_access(chunk_size=0x2000):
 def on_txt_message(message, data):
     if message["type"] == "send":
         print(f'[.TEXT SEGMENT] {message["payload"]}')
-        log_file.write(".Text\n" + message["payload"] + "\n")
+        with codecs.open(file_path_log, "a", "utf-8") as f:
+            f.write(".Text\n" + message["payload"] + "\n")
     elif message["type"] == "error":
         print("[FEHLER]", message["stack"])
     else:

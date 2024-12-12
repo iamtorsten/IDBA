@@ -264,7 +264,7 @@ def on_message(message, data):
 
                 # Protokolliere die Registeränderungen
                 mem_access_type = mem.classify_arm64_instruction(mnemonic)
-                if mem_access_type != "Unklassifiziert":
+                if mem_access_type != "Unklassifiziert" and mem_access_type != "Zugriff":
                     print(f"{gelb}Speicher {mem_access_type.upper()} bei '{mnemonic} {opStr.strip()}' " + ' '.join(current_register_values) + f"{reset}")
                     try:
                         with codecs.open(file_path_log, "a", "utf-8") as f:
@@ -321,7 +321,7 @@ def on_message(message, data):
                         f.write(f'SPRUNG bei {real_instruction_address} => {target_offset}\n')
                     # Füge erkannte Sprünge in die Textdatei hinzu, welche zur Steuerung der zu hookenden Funktionen gilt
                     # Format {"offset": 0xb6b9c, "name": "0xb6b9c"}
-                    with codecs.open('functions.txt', "a", "utf-8") as f:
+                    with codecs.open('symbols.txt', "a", "utf-8") as f:
                         f.write(f'{{"offset": {target_offset}, "name": "{target_offset}"}}\n')
                 except Exception as e:
                     print(f"{rot}[FEHLER] Fehler konnte nicht in die Protokolldatei geschrieben werden: {e}{reset}")
