@@ -38,7 +38,7 @@ def monitor_text_access(chunk_size=0x2000):
 
                    ranges.forEach(function(range) {{
                        if (range.protection !== "r-x") {{
-                           console.warn("[INFO] Bereich übersprungen: " + JSON.stringify(range));
+                           //console.warn("[INFO] Bereich übersprungen: " + JSON.stringify(range));
                            return;
                        }}
 
